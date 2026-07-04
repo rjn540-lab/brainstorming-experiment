@@ -1,0 +1,18 @@
+{
+  "name": "qualtrics-brainstorming-experiment",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node --check app.js && node --check config.js && node --check api/_shared.js && node --check api/ai-feedback.js && node --check api/save-session.js",
+    "serve": "node tools/serve.mjs",
+    "test:api": "node tools/api-smoke-test.mjs",
+    "build:qsf": "node tools/build-qualtrics-qsf.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "firebase-admin": "^14.1.0"
+  }
+}
