@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Digital Brainstorming Task</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">DIGITAL BRAINSTORMING STUDY</p>
+        <h1>Idea generation task</h1>
+      </div>
+      <div class="timer-card" aria-live="polite">
+        <span>Time remaining</span>
+        <strong id="timer">10:00</strong>
+      </div>
+    </header>
+
+    <main id="app" class="workspace" hidden>
+      <section class="task-column">
+        <div class="task-card">
+          <span class="step-label">YOUR TASK</span>
+          <h2 id="task-question"></h2>
+          <p id="task-instructions"></p>
+        </div>
+
+        <label class="editor-label" for="ideas">Your ideas</label>
+        <textarea id="ideas" maxlength="12000" spellcheck="true"
+          placeholder="Write each idea on a new line. You can revise your ideas at any time."></textarea>
+        <div class="editor-meta">
+          <span id="save-status" role="status">Saved locally</span>
+          <span><b id="word-count">0</b> words</span>
+        </div>
+      </section>
+
+      <aside id="assistant-panel" class="assistant-panel" aria-label="AI idea partner" hidden>
+        <div class="assistant-header">
+          <div class="ai-mark" aria-hidden="true">✦</div>
+          <div>
+            <h2>AI idea partner</h2>
+            <p id="assistant-status">Ready when you are</p>
+          </div>
+          <span class="status-dot" aria-hidden="true"></span>
+        </div>
+        <div id="messages" class="messages" aria-live="polite">
+          <div class="message assistant-message">
+            <p>Start writing your ideas. I’ll occasionally offer a short prompt to help you keep exploring.</p>
+          </div>
+        </div>
+        <div class="assistant-actions">
+          <button id="feedback-button" class="secondary-button" type="button">
+            Get a fresh perspective
+          </button>
+          <p>Suggestions are optional. Keep only what is useful to you.</p>
+        </div>
+      </aside>
+    </main>
+
+    <section id="error-panel" class="error-panel" hidden>
+      <h2>This study link is incomplete</h2>
+      <p id="error-message"></p>
+    </section>
+
+    <footer class="footer">
+      <p id="participant-label"></p>
+      <button id="submit-button" class="primary-button" type="button" disabled>
+        Finish task
+      </button>
+    </footer>
+  </div>
+
+  <div id="completion-overlay" class="completion-overlay" hidden>
+    <div class="completion-card">
+      <div class="completion-icon">✓</div>
+      <h2>Task complete</h2>
+      <p id="completion-message">Saving your responses and returning you to the questionnaire…</p>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
