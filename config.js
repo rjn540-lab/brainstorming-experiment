@@ -1,5 +1,5 @@
 window.EXPERIMENT_CONFIG = Object.freeze({
-  API_BASE_URL: "https://YOUR-VERCEL-PROJECT.vercel.app",
+  API_BASE_URL: "https://brainstorming-experiment.vercel.app",
   QUALTRICS_RETURN_URL: "https://york.qualtrics.com/jfe/form/SV_ctDgR6Vj9SMxWUS",
   TASK_DURATION_SECONDS: 600,
   AUTO_FEEDBACK_INTERVAL_SECONDS: 90,
