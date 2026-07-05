@@ -188,6 +188,7 @@
             session_id: sessionId,
             condition,
             ideas: inputSnapshot,
+            task_question: cfg.TASK_QUESTION,
             interaction_count: state.interactionCount
           })
         });
@@ -250,6 +251,8 @@
       session_id: sessionId,
       participant_id: participantId,
       condition,
+      task_question: cfg.TASK_QUESTION,
+      task_instructions: cfg.TASK_INSTRUCTIONS,
       brainstorm_text: el.ideas.value,
       started_at: state.startedAt,
       ended_at: state.endedAt,
