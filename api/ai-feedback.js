@@ -12,9 +12,13 @@ export default async function handler(req, res) {
   if (body.condition !== "real_ai") return jsonError(res, 403, "AI feedback is only available in this condition");
 
   const ideas = String(body.ideas || "").trim().slice(0, 12000);
+  const taskQuestion = String(body.task_question || "").trim().slice(0, 2000);
+  const taskContext = taskQuestion
+    ? `The brainstorming task is:\n\n${taskQuestion}\n\n`
+    : "";
   const userContent = ideas
-    ? `The participant's current ideas are:\n\n${ideas}`
-    : "The participant has not written any ideas yet. Give one brief, open-ended starting prompt.";
+    ? `${taskContext}The participant's current ideas are:\n\n${ideas}`
+    : `${taskContext}The participant has not written any ideas yet. Give one brief, open-ended starting prompt.`;
 
   try {
     const upstream = await fetch("https://api.openai.com/v1/responses", {

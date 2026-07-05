@@ -40,6 +40,8 @@ export function buildRecord(body) {
     session_id: body.session_id,
     participant_id: body.participant_id,
     condition: body.condition,
+    task_question: String(body.task_question || "").slice(0, 2000),
+    task_instructions: String(body.task_instructions || "").slice(0, 2000),
     brainstorm_text: String(body.brainstorm_text || "").slice(0, 12000),
     started_at: normaliseDate(body.started_at),
     ended_at: normaliseDate(body.ended_at),
