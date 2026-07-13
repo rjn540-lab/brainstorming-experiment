@@ -4,11 +4,23 @@
   const cfg = window.EXPERIMENT_CONFIG;
   const params = new URLSearchParams(window.location.search);
   const participantId = (params.get("participant_id") || "").trim();
-  const condition = (params.get("condition") || "").trim();
+  const rawCondition = (params.get("condition") || "").trim();
+  const conditionCodes = Object.freeze({
+    A: "control",
+    B: "fake_ai",
+    C: "real_ai"
+  });
+  const conditionCodeByLabel = Object.freeze({
+    control: "A",
+    fake_ai: "B",
+    real_ai: "C"
+  });
+  const condition = conditionCodes[rawCondition] || rawCondition;
+  const conditionCode = conditionCodeByLabel[condition] || rawCondition;
   const validConditions = new Set(["control", "fake_ai", "real_ai"]);
   const isAiCondition = condition === "fake_ai" || condition === "real_ai";
   const sessionId = crypto.randomUUID();
-  const storageKey = `brainstorm:${participantId}:${condition}`;
+  const storageKey = `brainstorm:${participantId}:${conditionCode}`;
 
   const el = {
     app: document.querySelector("#app"),
@@ -187,6 +199,7 @@
             participant_id: participantId,
             session_id: sessionId,
             condition,
+            condition_code: conditionCode,
             ideas: inputSnapshot,
             task_question: cfg.TASK_QUESTION,
             interaction_count: state.interactionCount
@@ -251,6 +264,7 @@
       session_id: sessionId,
       participant_id: participantId,
       condition,
+      condition_code: conditionCode,
       task_question: cfg.TASK_QUESTION,
       task_instructions: cfg.TASK_INSTRUCTIONS,
       brainstorm_text: el.ideas.value,
@@ -318,7 +332,7 @@
     }
     const destination = new URL(cfg.QUALTRICS_RETURN_URL);
     destination.searchParams.set("participant_id", participantId);
-    destination.searchParams.set("condition", condition);
+    destination.searchParams.set("condition", conditionCode);
     destination.searchParams.set("session_id", sessionId);
     window.location.assign(destination.toString());
   }
