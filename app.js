@@ -202,6 +202,7 @@
             condition_code: conditionCode,
             ideas: inputSnapshot,
             task_question: cfg.TASK_QUESTION,
+            recent_feedback: getRecentFeedback(),
             interaction_count: state.interactionCount
           })
         });
@@ -239,6 +240,13 @@
     el.messages.appendChild(bubble);
     el.messages.scrollTop = el.messages.scrollHeight;
     return bubble;
+  }
+
+  function getRecentFeedback() {
+    return state.interactions
+      .filter(item => item.type === "feedback_displayed" && item.response)
+      .slice(-3)
+      .map(item => String(item.response).slice(0, 500));
   }
 
   async function typeOrganically(target, text) {
