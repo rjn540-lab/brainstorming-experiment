@@ -106,6 +106,7 @@
     updateWordCount();
     startTimer();
     bindEvents();
+    installNavigationGuard();
     saveDraft("started");
 
     if (isAiCondition) {
@@ -131,6 +132,26 @@
     window.addEventListener("pagehide", () => {
       if (!state.submitted) saveDraft("pagehide", true);
     });
+    window.addEventListener("beforeunload", event => {
+      if (state.submitted) return undefined;
+      event.preventDefault();
+      event.returnValue = "";
+      return "";
+    });
+  }
+
+  function installNavigationGuard() {
+    try {
+      window.history.replaceState({ taskPage: true }, "", window.location.href);
+      window.history.pushState({ taskPage: true }, "", window.location.href);
+      window.addEventListener("popstate", () => {
+        if (state.submitted) return;
+        window.history.pushState({ taskPage: true }, "", window.location.href);
+        el.saveStatus.textContent = "Please continue the task; the previous page is disabled during brainstorming.";
+      });
+    } catch (_) {
+      /* History protection is best-effort; Qualtrics back buttons should also be disabled. */
+    }
   }
 
   function startTimer() {
