@@ -53,17 +53,30 @@
     interactions: [],
     feedbackBusy: false,
     submitted: false,
-    lastFeedbackAt: 0
+    lastFeedbackAt: 0,
+    lowInputPromptCount: 0
   };
 
-  const fakeFeedback = [
-    "You’re building a strong set of ideas. Keep exploring different directions.",
-    "That’s a promising start. What other possibilities might fit alongside these?",
-    "Your ideas show good variety. Try looking at the problem from another angle.",
-    "Nice progress. You could keep going by thinking about different people or situations.",
-    "There are some interesting possibilities here. See whether one idea leads to another.",
-    "You’re developing a useful range of thoughts. Keep adding anything that comes to mind."
-  ];
+  const fakeAiFeedback = Object.freeze({
+    firstEngaged: "Thanks, I'm following along as you type. Keep your ideas coming.",
+    lowInputPrompts: Object.freeze([
+      "Whenever you are ready, feel free to type your first idea, and I will support you from here.",
+      "Take your time. When you're ready, just start typing any idea that comes to mind, even a rough one.",
+      "No rush. If you're not sure where to begin, try picturing one small problem a person living alone might face."
+    ]),
+    randomPrompts: Object.freeze([
+      "Noted. Try exploring a different angle for your next idea.",
+      "Okay, I've logged that. What other situations might be worth thinking about?",
+      "Got it. There may be more directions here worth considering.",
+      "There could be other angles beyond this one. What else comes to mind?",
+      "This is a decent direction, but have you thought about what it might miss?",
+      "Have you thought about any downsides that might come with ideas like this?",
+      "Interesting. Have you considered who else this might need to work for?",
+      "That's one way to look at it, though it may not fit every case.",
+      "I'm not certain about that one. It might be worth rethinking or trying another route."
+    ]),
+    ending: "You are exploring a variety of directions. Keep going."
+  });
 
   function showError(message) {
     el.errorMessage.textContent = message;
@@ -137,8 +150,12 @@
     el.timer.closest(".timer-card").classList.toggle("warning", seconds <= 60);
   }
 
+  function countWords(text) {
+    return text.trim() ? text.trim().split(/\s+/u).length : 0;
+  }
+
   function updateWordCount() {
-    const words = el.ideas.value.trim() ? el.ideas.value.trim().split(/\s+/u).length : 0;
+    const words = countWords(el.ideas.value);
     el.wordCount.textContent = String(words);
   }
 
@@ -184,13 +201,14 @@
     el.assistantStatus.textContent = "Considering your ideas";
     const bubble = createThinkingBubble();
     const inputSnapshot = el.ideas.value.trim();
-    recordEvent("feedback_requested", { trigger, input: inputSnapshot });
+    const inputWordCount = countWords(inputSnapshot);
+    recordEvent("feedback_requested", { trigger, input: inputSnapshot, word_count: inputWordCount });
 
     try {
       let responseText;
       if (condition === "fake_ai") {
         await wait(900 + Math.random() * 1300);
-        responseText = fakeFeedback[state.interactionCount % fakeFeedback.length];
+        responseText = selectFakeAiFeedback(inputWordCount);
       } else {
         const response = await fetch(`${normaliseBase(cfg.API_BASE_URL)}/api/ai-feedback`, {
           method: "POST",
@@ -240,6 +258,23 @@
     el.messages.appendChild(bubble);
     el.messages.scrollTop = el.messages.scrollHeight;
     return bubble;
+  }
+
+  function selectFakeAiFeedback(inputWordCount) {
+    if (inputWordCount <= 5 && state.lowInputPromptCount < fakeAiFeedback.lowInputPrompts.length) {
+      const response = fakeAiFeedback.lowInputPrompts[state.lowInputPromptCount];
+      state.lowInputPromptCount += 1;
+      return response;
+    }
+
+    const feedbackNumber = state.interactionCount + 1;
+    if (feedbackNumber >= 6) return fakeAiFeedback.ending;
+    if (feedbackNumber === 1 && inputWordCount > 5) return fakeAiFeedback.firstEngaged;
+    return randomItem(fakeAiFeedback.randomPrompts);
+  }
+
+  function randomItem(items) {
+    return items[Math.floor(Math.random() * items.length)];
   }
 
   function getRecentFeedback() {
